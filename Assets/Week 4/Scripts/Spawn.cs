@@ -1,40 +1,43 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Threading;
 using UnityEngine;
 
 public class Spawn : MonoBehaviour
 {
     float timer;
-    public GameObject Plane;
-    float timertarget = 5;
-    public Transform Spawner;
-    Vector3 position;
-    Quaternion rotation;
-    
-    
-    
+    public GameObject PlanePrefab;
+    float timertarget;
+    public Sprite[] planeSprites;
 
-    // Start is called before the first frame update
     void Start()
     {
-        Plane = GetComponent<GameObject>();
-
+        timertarget = Random.Range(1, 5);
     }
 
-    // Update is called once per frame
     void Update()
     {
         timer += Time.deltaTime;
-            if(timer > timertarget )
+        if (timer > timertarget)
         {
+            Vector3 position = new Vector3(Random.Range(-5, 5), Random.Range(-5, 5), 0);
+            Quaternion rotation = Quaternion.Euler(0, 0, Random.Range(0, 360));
+            GameObject newPlane = Instantiate(PlanePrefab, position, rotation);
 
-            Vector2 position = new Vector2(Random.Range(-5, 5), Random.Range(-5, 5));
-           Quaternion rotation = new Quaternion(Random.Range(0, 0), Random.Range(0,0), Random.Range(-180,180),Random.Range(-180,180));
-            float speed = Random.Range(1, 3);
-            Instantiate(Plane, position, rotation, );
-            GetComponent<Plane>().SetSpeed(speed);
+            SpriteRenderer spriteRenderer = newPlane.GetComponent<SpriteRenderer>();
+            if (spriteRenderer != null && planeSprites.Length > 0)
+            {
+                spriteRenderer.sprite = planeSprites[Random.Range(0, planeSprites.Length)];
+            }
+
+            // Set a random speed directly if speed is public in Plane script
+            Plane planeScript = newPlane.GetComponent<Plane>();
+            if (planeScript != null)
+            {
+                planeScript.speed = Random.Range(1, 3); // Assuming speed is a public field in Plane
+            }
+
             timer = 0;
+            timertarget = Random.Range(1, 5);
         }
     }
 }
