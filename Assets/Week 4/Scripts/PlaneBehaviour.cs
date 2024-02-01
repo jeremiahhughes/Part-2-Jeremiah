@@ -4,35 +4,75 @@ using UnityEngine;
 
 public class PlaneBehaviour : MonoBehaviour
 {
-    public float dangerDistance = 2.0f; // Define the danger distance
-    private bool isInDangerZone = false; // Flag to check if the plane is in danger zone
+    public float dangerDistance = 2; // Define the danger distance
+    public AnimationCurve landingCurve;
+    public float landingDuration = 5; // Duration for landing
+    public static int score = 0; // Public score variable
+    private bool isLanding = false;
+    private float landingTimer = 0;
+    private bool isInDangerZone = false; // Flag for danger zone
 
     void Start()
     {
-        // Ensure the plane has a Collider component that triggers events and is marked as a trigger
-        Collider collider = GetComponent<Collider>();
-        if (collider != null)
+        // Use the correct type for 2D physics
+        Collider2D collider = GetComponent<Collider2D>();
+        if (collider == null)
         {
+            collider = gameObject.AddComponent<CircleCollider2D>();
             collider.isTrigger = true;
         }
     }
 
     void Update()
     {
+        if (isLanding)
+        {
+            LandPlane();
+        }
+        else
+        {
+            CheckProximityToOtherPlanes();
+        }
+    }
+
+    void CheckProximityToOtherPlanes()
+    {
         GameObject[] planes = GameObject.FindGameObjectsWithTag("Plane");
-        isInDangerZone = false; // Reset the danger flag
+        isInDangerZone = false;
 
         foreach (var plane in planes)
         {
             if (plane != gameObject && Vector3.Distance(transform.position, plane.transform.position) < dangerDistance)
             {
-                isInDangerZone = true; // Set flag to true if any plane is too close
-                break; // No need to check other planes once one is found to be too close
+                isInDangerZone = true;
+                break;
             }
         }
 
-        // Change color based on danger zone flag
+        // Update plane color based on proximity
         GetComponent<SpriteRenderer>().color = isInDangerZone ? Color.red : Color.white;
+    }
+
+    void LandPlane()
+    {
+        landingTimer += Time.deltaTime;
+        float scale = landingCurve.Evaluate(landingTimer / landingDuration);
+        transform.localScale = new Vector3(scale, scale, scale);
+
+        if (landingTimer >= landingDuration)
+        {
+            Destroy(gameObject); // Destroy plane after landing
+            score++; // Increase the score
+        }
+    }
+
+    // Adjust to OnTriggerEnter2D for 2D physics
+    void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.CompareTag("Runway") && !isLanding)
+        {
+            isLanding = true;
+        }
     }
 
     void OnBecameInvisible()
