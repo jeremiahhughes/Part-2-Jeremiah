@@ -11,12 +11,13 @@ public class Weapon : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
+        GetComponent<GameObject>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        if  
+        
     }
 
     public void FixedUpdate()
@@ -24,7 +25,13 @@ public class Weapon : MonoBehaviour
         transform.Translate(0, katanaSpeed * Time.deltaTime, 0);
     }
 
-     void OnBecameInvisible()
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        collision.gameObject.SendMessage("TakeDamage", 1, SendMessageOptions.DontRequireReceiver);
+        Destroy(gameObject);
+    }
+
+    void OnBecameInvisible()
     {
         Destroy(gameObject);
     }
