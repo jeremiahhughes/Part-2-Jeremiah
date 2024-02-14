@@ -14,4 +14,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Week 5/Scenes/Week 5.unity
     guid: 01016b15f95999341981c70a2611bb02
+  - enabled: 1
+    path: Assets/Week 6/Scenes/Scene B.unity
+    guid: e17d2f302ef4ac143bd8ad2cee4c90db
   m_configObjects: {}
