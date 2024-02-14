@@ -7,12 +7,23 @@ public class HealthBar : MonoBehaviour
    
     public Slider slider;
 
-    public void TakeDamage(float damage)
+    void Start()
     {
-        slider.value -= damage;
+        InitializeHealth(PlayerPrefs.GetFloat("currentHealth", 5));
     }
-    public void setHealth(float damage)
+
+    void InitializeHealth(float initialHealth)
     {
-        slider.value -= damage;
+        SetHealth(initialHealth);
+    }
+
+    void UpdateHealthUI(float newHealth)
+    {
+        SetHealth(newHealth);
+    }
+
+    void SetHealth(float healthValue)
+    {
+        slider.value = healthValue;
     }
 }

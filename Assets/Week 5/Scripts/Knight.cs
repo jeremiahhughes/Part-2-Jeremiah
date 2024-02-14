@@ -20,16 +20,15 @@ public class Knight : MonoBehaviour
     bool isDead;
     public HealthBar healthBar;
 
-    // Start is called before the first frame update
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
         healthBar = GetComponent<HealthBar>();
-        health = maxHealth;
         isDead = false;
-        SendMessage("setHealth", PlayerPrefs.GetFloat("currentHealth", maxHealth));
         health = PlayerPrefs.GetFloat("currentHealth", maxHealth);
+        SendMessage("InitializeHealth", health);
+        PlayerPrefs.SetFloat("currentHealth", health);
     }
 
     private void FixedUpdate()
@@ -42,6 +41,7 @@ public class Knight : MonoBehaviour
         }
         rb.MovePosition(rb.position + movement.normalized * speed * Time.deltaTime);
     }
+
     void Update()
     {
         if (isDead) return;
@@ -53,25 +53,27 @@ public class Knight : MonoBehaviour
         {
             animator.SetTrigger("Attack");
         }
-      animator.SetFloat("Movement", movement.magnitude);
+        animator.SetFloat("Movement", movement.magnitude);
     }
+
     private void OnMouseDown()
     {
         if (isDead) return;
         clickOnSelf = true;
-        gameObject.SendMessage("TakeDamage", 1);
-
+        SendMessage("TakeDamage", 1);
     }
+
     private void OnMouseUp()
     {
         clickOnSelf = false;
     }
 
-    
     public void TakeDamage(float damage)
     {
         health -= damage;
         health = Mathf.Clamp(health, 0, maxHealth);
+        SendMessage("UpdateHealthUI", health);
+
         if (health <= 0)
         {
             isDead = true;
@@ -82,8 +84,6 @@ public class Knight : MonoBehaviour
             isDead = false;
             animator.SetTrigger("Take Damage");
         }
-        PlayerPrefs.SetFloat("currentHealth", maxHealth);
-
-
+        PlayerPrefs.SetFloat("currentHealth", health);
     }
 }
