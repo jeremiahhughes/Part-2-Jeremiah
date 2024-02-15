@@ -6,14 +6,12 @@ using UnityEngine.UI;
 public class UIManager : MonoBehaviour
 {
     public Button nextSceneButton;
-    public Button resolution16_9Button;
-    public Button fullHDButton;
+    public int width;
+    public int height;
 
     public void Start()
     {
         nextSceneButton.onClick.AddListener(LoadNextScene);
-        resolution16_9Button.onClick.AddListener(SetResolution16_9);
-        fullHDButton.onClick.AddListener(SetResolutionFullHD);
     }
 
     private void LoadNextScene()
@@ -25,13 +23,15 @@ public class UIManager : MonoBehaviour
     }
 
 
-    public void SetResolution16_9()
-    {
-        Screen.SetResolution(1600, 900, FullScreenMode.Windowed);
+    public void SetWidth(int newWidth){
+        width = newWidth;
     }
 
-    public void SetResolutionFullHD()
-    {
-        Screen.SetResolution(1920, 1080, FullScreenMode.Windowed);
+    public void SetHeight(int newHeight){
+        height = newHeight;
+    }
+    public void Setres(){
+        Screen.SetResolution(width, height, false);
     }
 }
+
