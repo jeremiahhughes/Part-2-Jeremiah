@@ -20,12 +20,14 @@ public class Player : MonoBehaviour
     bool isDead;
     public HealthBar healthBar;
 
+
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
         healthBar = GetComponent<HealthBar>();
         isDead = false;
+        health = maxHealth;
         health = PlayerPrefs.GetFloat("currentHealth", maxHealth);
         SendMessage("InitializeHealth", health);
         PlayerPrefs.SetFloat("currentHealth", health);
@@ -45,19 +47,15 @@ public class Player : MonoBehaviour
     void Update()
     {
         if (isDead) return;
-
-        float movementMagnitude = movement.magnitude;
-        animator.SetFloat("Movement", movementMagnitude);
-
         if (Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject())
         {
             destination = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         }
-
         if (Input.GetMouseButton(1))
         {
             animator.SetTrigger("Attack");
         }
+        animator.SetFloat("Movement", movement.magnitude);
     }
 
     public void TakeDamage(float damage)
@@ -78,5 +76,14 @@ public class Player : MonoBehaviour
             animator.SetTrigger("Take Damage");
         }
         PlayerPrefs.SetFloat("currentHealth", health);
+    }
+
+    void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.CompareTag("Enemy"))
+        {
+
+            SendMessage("OnPlayerHit", SendMessageOptions.DontRequireReceiver);
+        }
     }
 }
