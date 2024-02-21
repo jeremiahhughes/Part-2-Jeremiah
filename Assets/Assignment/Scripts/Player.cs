@@ -19,6 +19,10 @@ public class Player : MonoBehaviour
     public float maxHealth = 5;
     bool isDead;
     public HealthBar healthBar;
+    public SpriteRenderer spriteRenderer;
+    public Gradient colorGradient;
+    float colorChangeDuration = 1;
+    float elapsedTime;
 
 
     void Start()
@@ -42,6 +46,8 @@ public class Player : MonoBehaviour
             movement = Vector2.zero;
         }
         rb.MovePosition(rb.position + movement.normalized * speed * Time.deltaTime);
+
+        
     }
 
     void Update()
